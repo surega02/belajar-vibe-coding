@@ -12,3 +12,10 @@ export const users = mysqlTable("users", {
     .onUpdateNow()
     .notNull(),
 });
+
+export const sessions = mysqlTable("sessions", {
+  id: serial("id").primaryKey(),
+  token: varchar("token", { length: 255 }).notNull(),
+  userId: serial("user_id").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});

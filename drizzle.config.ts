@@ -7,7 +7,7 @@ export default defineConfig({
   dbCredentials: {
     host: process.env.DB_HOST || "localhost",
     user: process.env.DB_USERNAME || "root",
-    password: process.env.DB_PASSWORD, // Allow undefined if empty
+    password: process.env.DB_PASSWORD || "", // Allow empty string
     database: process.env.DB_NAME || "db_belajar_vibe_coding",
     port: Number(process.env.DB_PORT) || 3306,
   },
