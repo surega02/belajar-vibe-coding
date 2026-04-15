@@ -49,4 +49,16 @@ export const usersService = {
 
     return result;
   },
+
+  logoutUser: async (token: string) => {
+    // Jalankan perintah DELETE pada tabel sessions
+    const [result] = await db.delete(sessions).where(eq(sessions.token, token));
+
+    // Periksa apakah ada baris yang terhapus
+    if (result.affectedRows === 0) {
+      throw new Error("Unauthorized");
+    }
+
+    return "OK!";
+  },
 };
