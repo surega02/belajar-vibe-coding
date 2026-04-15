@@ -1,7 +1,36 @@
 import { Elysia, t } from "elysia";
-import { usersService } from "../services/users-service";
+import { usersService } from "../services/users.service";
 
 export const usersRoute = new Elysia({ prefix: "/api/users" })
+  .post("/", async ({ body, set }) => {
+    try {
+      const newUser = await usersService.registerUser(body);
+      
+      return {
+        message: "User created successfully",
+        data: newUser
+      };
+    } catch (error: any) {
+      if (error.message === "Email sudah terdaftar") {
+        set.status = 400;
+        return {
+          message: error.message
+        };
+      }
+      
+      set.status = 500;
+      return {
+        message: "Internal Server Error",
+        error: error.message
+      };
+    }
+  }, {
+    body: t.Object({
+      name: t.String(),
+      email: t.String({ format: 'email' }),
+      password: t.String()
+    })
+  })
   .post("/login", async ({ body, set }) => {
     try {
       const { email, password } = body;
@@ -10,7 +39,7 @@ export const usersRoute = new Elysia({ prefix: "/api/users" })
       return {
         data: token
       };
-    } catch (error) {
+    } catch (error: any) {
       set.status = 401;
       return {
         error: error.message

@@ -1,11 +1,9 @@
 import { Elysia } from "elysia";
 import { db } from "./db";
 import { users } from "./db/schema";
-import { userRoute } from "./routes/user.route";
-import { usersRoute } from "./routes/users-route";
+import { usersRoute } from "./routes/users.route";
 
 const app = new Elysia()
-  .use(userRoute)
   .use(usersRoute)
   .get("/", () => "Hello Elysia from Bun!")
   .get("/users", async () => {
