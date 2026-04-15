@@ -3,6 +3,12 @@ import { db } from "../db";
 import { users, sessions } from "../db/schema";
 
 export const usersService = {
+  /**
+   * Mendaftarkan pengguna baru ke dalam sistem.
+   * Melakukan pengecekan email duplikat dan hashing password sebelum disimpan.
+   * @param data - Objek berisi name, email, dan password.
+   * @returns Data pengguna yang baru dibuat (tanpa password).
+   */
   async registerUser(data: { name: string; email: string; password: string }) {
     // Check if email already exists
     const existingUser = await db
@@ -44,6 +50,12 @@ export const usersService = {
     return newUser[0];
   },
 
+  /**
+   * Melakukan verifikasi kredensial pengguna dan membuat sesi baru.
+   * @param data - Objek berisi email dan password.
+   * @returns Session token (UUID) jika login berhasil.
+   * @throws Error jika email tidak ditemukan atau password salah.
+   */
   loginUser: async ({ email, password }: any) => {
     // 1. Cari user berdasarkan email
     const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
@@ -71,6 +83,12 @@ export const usersService = {
     return token;
   },
 
+  /**
+   * Mengambil data profil pengguna berdasarkan session token yang valid.
+   * @param token - Session token (UUID).
+   * @returns Objek data user (id, name, email, createdAt).
+   * @throws Error "Unauthorized" jika token tidak valid atau sesi tidak ditemukan.
+   */
   getCurrentUser: async (token: string) => {
     const [result] = await db
       .select({
@@ -91,6 +109,12 @@ export const usersService = {
     return result;
   },
 
+  /**
+   * Menghapus sesi pengguna (logout) berdasarkan token yang diberikan.
+   * @param token - Session token yang akan dihapus.
+   * @returns String "OK!" jika berhasil.
+   * @throws Error "Unauthorized" jika token tidak ditemukan.
+   */
   logoutUser: async (token: string) => {
     // Jalankan perintah DELETE pada tabel sessions
     const [result] = await db.delete(sessions).where(eq(sessions.token, token));
